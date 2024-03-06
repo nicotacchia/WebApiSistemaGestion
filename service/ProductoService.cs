@@ -1,4 +1,7 @@
-﻿using WebApiSistemaGestion.database;
+﻿using System.Linq.Expressions;
+using WebApiSistemaGestion.database;
+using WebApiSistemaGestion.Dtos;
+using WebApiSistemaGestion.Mappers;
 using WebApiSistemaGestion.models;
 
 namespace WebApiSistemaGestion.service
@@ -6,60 +9,64 @@ namespace WebApiSistemaGestion.service
     public class ProductoService
     {
 
-        public static List<Producto> GetProductos()
+        private CoderContext db;
+
+        public ProductoService(CoderContext coderContext)
         {
-            using (CoderContext db = new CoderContext())
-            {
-                return db.Productos.ToList();
-            }
+            this.db = coderContext;
         }
 
-
-        public static List<Producto> GetProductById(int id)
+        public  List<Producto> GetProductById(int id)
         {
-            using (CoderContext db = new CoderContext())
-            {
+            
                 var productoEncontrado = db.Productos.Where<Producto>(p => p.Id == id).ToList();
                 return productoEncontrado.ToList();
-            }
+            
         }
 
-        public static void CrearProducto(Producto producto)
+        public bool CrearProducto(ProductoDto producto)
         {
-            using (CoderContext db = new CoderContext())
-            {
-                var productoCreado = new Producto(producto.Descripciones,producto.Costo,producto.PrecioVenta,producto.Stock);
+                Producto productoCreado = ProductoMapper.MapearAProducto(producto)
                 db.Productos.Add(productoCreado);
                 db.SaveChanges();
+                return true;
 
-
-            }
         }
 
-        public static void UpdateUsuario(Producto prod, int id)
+        public bool UpdateProducto(ProductoDto prod, int id)
         {
-            using (CoderContext db = new CoderContext())
-            {
-                var productoAModificar = db.Productos.Where<Producto>(p => p.Id == id).FirstOrDefault();
+         
+                var productoAModificar = this.db.Productos.Where<Producto>(p => p.Id == id).FirstOrDefault();
+                if(productoAModificar != null)
+                {
+                    productoAModificar.Descripciones = prod.Descripciones;
+                    productoAModificar.Costo = prod.Costo;
+                    productoAModificar.PrecioVenta = prod.PrecioVenta;
+                    productoAModificar.Stock = prod.Stock;
+
+                    db.Productos.Update(productoAModificar);
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
                 
-                productoAModificar.Descripciones = prod.Descripciones;
-                productoAModificar.Costo = prod.Costo;
-                productoAModificar.PrecioVenta = prod.PrecioVenta;
-                productoAModificar.Stock = prod.Stock;
-
-                db.Productos.Update(productoAModificar);
-                db.SaveChanges();
-            }
+            
         }
 
-        public static void RemoveProduct(int id)
+        public  bool RemoveProduct(int id)
         {
-            using (CoderContext db = new CoderContext())
-            {
+            
                 var productoEncontrado = db.Productos.Where<Producto>(p => p.Id == id).FirstOrDefault();
-                db.Remove(productoEncontrado);
-                db.SaveChanges();
-            }
+                
+                if (productoEncontrado != null)
+                {
+                    db.Remove(productoEncontrado);
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+             
+            
         }
     }
 }

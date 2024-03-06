@@ -3,42 +3,42 @@ using WebApiSistemaGestion.models;
 
 namespace WebApiSistemaGestion.service
 {
-    public static class UsuarioService
+    public class UsuarioService
     {
-        public static List<Usuario> GetUsuarios()
+        private CoderContext db;
+        public UsuarioService(CoderContext coderContext)
         {
-            using (CoderContext db = new CoderContext())
-            {
-                return db.Usuarios.ToList();
-            }
+            this.db = coderContext;
+
         }
 
-
-        public static List<Usuario> GetUserById(int id)
+        public List<Usuario> ObtenerTodosLosUsuarios()
         {
-            using (CoderContext db = new CoderContext())
-            {
+            return this.db.Usuarios.ToList();
+        }
+
+        public  List<Usuario> GetUserById(int id)
+        {
+            
                 var usuarioEncontrado = db.Usuarios.Where<Usuario>(u => u.Id == id).ToList();
                 return usuarioEncontrado.ToList();
-            }
+            
         }
 
-        public static void CrearUsuario( Usuario user)
+        public  void CrearUsuario( Usuario user)
         {
-            using (CoderContext db = new CoderContext())
-            {
+            
                 var usuarioCreado = new Usuario(user.Nombre, user.Apellido, user.NombreUsuario, user.Contraseña, user.Mail);
                 db.Usuarios.Add(usuarioCreado);
                 db.SaveChanges();   
 
 
-            }
+            
         }
 
-        public static void UpdateUsuario(Usuario user, int id)
+        public  void UpdateUsuario(Usuario user, int id)
         {
-            using (CoderContext db = new CoderContext())
-            {
+            
                 var usuarioAModificar = db.Usuarios.Where<Usuario>(u => u.Id == id).FirstOrDefault();
                 usuarioAModificar.Nombre = user.Nombre;
                 usuarioAModificar.Apellido = user.Apellido;
@@ -48,17 +48,20 @@ namespace WebApiSistemaGestion.service
 
                 db.Usuarios.Update(usuarioAModificar);
                 db.SaveChanges();
-            }
+            
         }
 
-        public static void RemoveUsuario(int id)
+        public bool RemoveUsuario(int id)
         {
-            using (CoderContext db = new CoderContext())
+
+            var usuarioEncontrado = db.Usuarios.Where<Usuario>(u => u.Id == id).FirstOrDefault();
+            if(usuarioEncontrado != null)
             {
-                var usuarioEncontrado = db.Usuarios.Where<Usuario>(u => u.Id == id).FirstOrDefault();
                 db.Remove(usuarioEncontrado);
                 db.SaveChanges();
+                return true;
             }
+            return false;
         }
 
 

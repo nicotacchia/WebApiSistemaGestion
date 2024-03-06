@@ -10,14 +10,6 @@ namespace WebApiSistemaGestion.models
             ProductoVendidos = new HashSet<ProductoVendido>();
         }
 
-        public Producto( string descripciones, decimal? costo, decimal precioVenta, int stock)
-        {
-            Descripciones = descripciones;
-            Costo = costo;
-            PrecioVenta = precioVenta;
-            Stock = stock;
-        }   
-
         public int Id { get; set; }
         public string Descripciones { get; set; } = null!;
         public decimal? Costo { get; set; }
