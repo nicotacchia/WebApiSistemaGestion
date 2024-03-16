@@ -24,9 +24,14 @@ namespace WebApiSistemaGestion.service
             
         }
 
+        public List<Producto> GetAllProducts()
+        {
+            return db.Productos.ToList();
+        }
+
         public bool CrearProducto(ProductoDto producto)
         {
-                Producto productoCreado = ProductoMapper.MapearAProducto(producto)
+            Producto productoCreado = ProductoMapper.MapearAProducto(producto);
                 db.Productos.Add(productoCreado);
                 db.SaveChanges();
                 return true;

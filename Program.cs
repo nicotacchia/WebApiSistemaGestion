@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using WebApiSistemaGestion.database;
+using WebApiSistemaGestion.Mappers;
 using WebApiSistemaGestion.service;
 
 namespace WebApiSistemaGestion
@@ -18,6 +20,19 @@ namespace WebApiSistemaGestion
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<ProductoService>();
             builder.Services.AddScoped<UsuarioService>();
+            builder.Services.AddScoped<ProductoVendidoService>();
+            builder.Services.AddScoped<VentaService>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyOrigin();
+
+                });
+            });
 
             builder.Services.AddDbContext<CoderContext>(options =>
             {

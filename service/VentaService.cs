@@ -1,63 +1,74 @@
 ﻿using System.Linq;
 using WebApiSistemaGestion.database;
+using WebApiSistemaGestion.Dtos;
 using WebApiSistemaGestion.models;
 
 namespace WebApiSistemaGestion.service
 {
     public class VentaService
     {
-        
-            public static List<Ventum> GetVentas()
+        private CoderContext db;
+        public VentaService(CoderContext coderContext)
+        {
+            this.db = coderContext;
+
+        }
+        public  List<Ventum> GetVentas()
             {
-                using (CoderContext db = new CoderContext())
-                {
+               
                     return db.Venta.ToList();
-                }
+               
             }
 
 
-            public static List<Ventum> GetUserById(int id)
+            public  List<Ventum> GetVentaById(int id)
             {
-                using (CoderContext db = new CoderContext())
-                {
+                
                     var ventaEncontrada = db.Venta.Where<Ventum>(v => v.Id == id).ToList();
                     return ventaEncontrada.ToList();
-                }
+                
             }
 
-            public static void CrearVenta(Ventum venta, Usuario user)
+            public  bool CrearVenta(VentaDto venta, int id)
             {
-                using (CoderContext db = new CoderContext())
-                {
-                    var ventaCreada = new Ventum(venta.Comentarios,user.Id);
+                
+                    var ventaCreada = new Ventum(venta.Comentarios, id);
+                    if(ventaCreada != null)
+            {
+
                     db.Venta.Add(ventaCreada);
                     db.SaveChanges();
-
-
-                }
+                return true;
+            }
+            return false;
+                
             }
 
-            public static void UpdateVenta(Ventum venta, int id)
+            public  void UpdateVenta(Ventum venta, int id)
             {
-                using (CoderContext db = new CoderContext())
-                {
+                
                     var ventaAModificar = db.Venta.Where<Ventum>(v => v.Id == id).FirstOrDefault();
                      ventaAModificar.Comentarios = venta.Comentarios;
 
                     db.Venta.Update(ventaAModificar);
                     db.SaveChanges();
-                }
+                
             }
 
-            public static void RemoveUsuario(int id)
+        public  bool RemoverVenta(int id)
+        {
+
+            var ventaEncontrado = db.Venta.Where<Ventum>(v => v.Id == id).FirstOrDefault();
+            if(ventaEncontrado != null)
             {
-                using (CoderContext db = new CoderContext())
-                {
-                    var ventaEncontrado = db.Venta.Where<Ventum>(v => v.Id == id).FirstOrDefault();
-                    db.Remove(ventaEncontrado);
-                    db.SaveChanges();
-                }
+            db.Remove(ventaEncontrado);
+            db.SaveChanges();
+                return true;
             }
+            return false;
+
+        }
+            
 
 
         

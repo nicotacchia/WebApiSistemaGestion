@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApiSistemaGestion.Dtos;
+using WebApiSistemaGestion.models;
 using WebApiSistemaGestion.service;
 
 
@@ -59,6 +60,14 @@ namespace WebApiSistemaGestion.Controllers
 
             }
             return base.BadRequest(new { status = 400, mensaje = "El id no puede ser negativo" });
+        }
+
+        [HttpGet("TodosLosProductos")]
+
+        public List<Producto> TraerTodosLosProductos()
+        {
+
+            return this.productoService.GetAllProducts();
         }
 
     }

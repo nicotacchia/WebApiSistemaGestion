@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebApiSistemaGestion.models
 {
-    public partial class Producto
+    public  class Producto
     {
         public Producto()
         {

@@ -1,4 +1,5 @@
 ﻿using WebApiSistemaGestion.database;
+using WebApiSistemaGestion.Dtos;
 using WebApiSistemaGestion.models;
 
 namespace WebApiSistemaGestion.service
@@ -25,21 +26,28 @@ namespace WebApiSistemaGestion.service
             
         }
 
-        public  void CrearUsuario( Usuario user)
+        public  bool CrearUsuario(UsuarioDto user)
         {
             
                 var usuarioCreado = new Usuario(user.Nombre, user.Apellido, user.NombreUsuario, user.Contraseña, user.Mail);
-                db.Usuarios.Add(usuarioCreado);
-                db.SaveChanges();   
+                 if (usuarioCreado != null)
+                     {
+                        db.Usuarios.Add(usuarioCreado);
+                        db.SaveChanges();
+                        return true;
+                     }
+            return false;
 
 
             
         }
 
-        public  void UpdateUsuario(Usuario user, int id)
+        public  bool UpdateUsuario(UsuarioDto user, int id)
         {
             
                 var usuarioAModificar = db.Usuarios.Where<Usuario>(u => u.Id == id).FirstOrDefault();
+                if(usuarioAModificar != null)
+                {
                 usuarioAModificar.Nombre = user.Nombre;
                 usuarioAModificar.Apellido = user.Apellido;
                 usuarioAModificar.NombreUsuario = user.NombreUsuario;
@@ -48,6 +56,10 @@ namespace WebApiSistemaGestion.service
 
                 db.Usuarios.Update(usuarioAModificar);
                 db.SaveChanges();
+                return true;
+
+                }
+                return false;
             
         }
 
@@ -62,6 +74,23 @@ namespace WebApiSistemaGestion.service
                 return true;
             }
             return false;
+        }
+
+        public  Usuario? ObtenerUsuarioPorUsuarioYPassword(string usuario, string password)
+        {
+            List<Usuario> usuarios = db.Usuarios.ToList();
+
+
+
+            Usuario? usuarioBuscado = usuarios.Find(u => u.NombreUsuario == usuario && u.Contraseña == password);
+
+
+            if (usuarioBuscado is null)
+
+            {
+                throw new ("Usuario no encontrado");
+            }
+            return usuarioBuscado;
         }
 
 
